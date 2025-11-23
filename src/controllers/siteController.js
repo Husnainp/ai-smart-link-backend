@@ -1,6 +1,12 @@
 import { createSiteService, listSitesService, getSiteService, updateSiteService, deleteSiteService } from '../services/siteService.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
+import mongoose from 'mongoose';
+
+// Escape user input for safe regex usage
+function escapeRegExp(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 const createSite = asyncHandler(async (req, res, next) => {
   const data = req.body;
@@ -14,9 +20,29 @@ const createSite = asyncHandler(async (req, res, next) => {
   });
 });
 
-const listSites = asyncHandler(async (req, res) => {
-  const sites = await listSitesService();
-  return res.json( sites );
+const listSites = asyncHandler(async (req, res, next) => {
+  // Allow filtering by category id via query param: /api/sites?category=<categoryId>
+  // Also allow searching by title via `q` or `title` query param: /api/sites?q=term
+  const { category, page, limit, sort } = req.query;
+  const search = req.query.q || req.query.title || req.query.search;
+
+  const filter = {};
+  if (category) {
+    if (!mongoose.isValidObjectId(category)) {
+      return next(new ApiError(400, 'Invalid category id'));
+    }
+    filter.category = category;
+  }
+
+  if (search) {
+    const safe = escapeRegExp(search);
+    filter.title = { $regex: safe, $options: 'i' };
+  }
+
+  const options = { page, limit, sort };
+
+  const sites = await listSitesService(filter, options);
+  return res.json(sites);
 });
 
 const getSite = asyncHandler(async (req, res, next) => {

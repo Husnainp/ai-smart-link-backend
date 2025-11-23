@@ -7,7 +7,8 @@ const createSiteSchema = Joi.object({
   title: Joi.string().min(1).required(),
   cover_image: Joi.string().uri().optional().allow(null, ''),
   description: Joi.string().optional().allow(null, ''),
-  category: Joi.string().min(1).required(),
+  // MongoDB ObjectId (24 hex chars)
+  category: Joi.string().hex().length(24).required(),
 });
 
 // Update: allow partial updates but require at least one field
@@ -16,7 +17,7 @@ const updateSiteSchema = Joi.object({
   title: Joi.string().min(1).optional(),
   cover_image: Joi.string().uri().optional().allow(null, ''),
   description: Joi.string().optional().allow(null, ''),
-  category: Joi.string().min(1).optional(),
+  category: Joi.string().hex().length(24).optional(),
 }).min(1);
 
 const validateCreateSite = joiValidate(createSiteSchema);

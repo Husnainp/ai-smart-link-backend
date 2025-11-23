@@ -9,6 +9,7 @@ import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import siteRoutes from './routes/siteRoutes.js';
 import helperRouter from './routes/helperRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 
 app.use(cors({
@@ -27,6 +28,8 @@ app.use(compression());
 app.use('/api/auth', authRoutes);
 // Sites
 app.use('/api/sites', siteRoutes);
+// Categories
+app.use('/api/categories', categoryRoutes);
 // AI
 app.use('/api/ai', aiRoutes);
 app.use("/api/upload-helper", helperRouter);

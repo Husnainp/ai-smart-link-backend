@@ -16,6 +16,8 @@ async function listSitesService(filter = {}, options = {}) {
 
   const query = Site.find(filter);
   if (options.sort) query.sort(options.sort);
+  // populate related category info
+  query.populate('category', 'name');
   query.limit(limit).skip(skip);
 
   const [results, total] = await Promise.all([query.exec(), Site.countDocuments(filter).exec()]);
@@ -32,7 +34,7 @@ async function listSitesService(filter = {}, options = {}) {
 
 async function getSiteService(id) {
   if (!mongoose.isValidObjectId(id)) return null;
-  return await Site.findById(id).exec();
+  return await Site.findById(id).populate('category', 'name description').exec();
 }
 
 async function updateSiteService(id, data) {
@@ -62,7 +64,7 @@ async function updateSiteService(id, data) {
 
   Object.assign(site, updates);
   await site.save();
-  return site;
+  return await Site.findById(id).populate('category', 'name description').exec();
 }
 
 async function deleteSiteService(id) {

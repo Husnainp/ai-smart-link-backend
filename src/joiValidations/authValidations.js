@@ -17,7 +17,8 @@ const siteSchema = Joi.object({
   title: Joi.string().min(1).required(),
   coverImage: Joi.string().uri().optional().allow(null,''),
   description: Joi.string().optional().allow(null,''),
-  category: Joi.string().min(1).required(),
+  // category as MongoDB ObjectId string
+  category: Joi.string().hex().length(24).required(),
 });
 
 

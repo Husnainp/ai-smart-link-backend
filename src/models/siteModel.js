@@ -8,11 +8,12 @@ const siteSchema = new Schema(
     title: { type: String, required: true },
     cover_image: { type: String },
     description: { type: String },
-    category: { type: String, required: true },
+    // Reference to Category model
+    category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
 
-const Site =  mongoose.model('Site', siteSchema);
+const Site = mongoose.model('Site', siteSchema);
 
 export default Site;
