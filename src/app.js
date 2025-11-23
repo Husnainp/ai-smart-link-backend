@@ -33,6 +33,10 @@ app.use('/api/categories', categoryRoutes);
 // AI
 app.use('/api/ai', aiRoutes);
 app.use("/api/upload-helper", helperRouter);
+// Default health-check route
+app.get('/', (req, res) => {
+        res.status(200).json({ success: true, message: 'Server is working' });
+});
 // Attach global error handler
 app.use(globalErrorHandler);
 
